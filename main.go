@@ -21,7 +21,6 @@ func main() {
 	// Parse the command-line flags
 	test = flag.Bool("test", false, "Test mode")
 	flag.Parse()
-	fmt.Println(*test)
 	// Set up the connection to the MongoDB server
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
@@ -32,7 +31,6 @@ func main() {
 	defer cancel()
 	
 	args := flag.Args()
-	fmt.Println(args)
 	if len(args) > 0 {
 		filename := args[0]
 		err := AddDataFromJSONFile(client, filename)
@@ -67,7 +65,6 @@ func AddDataFromJSONFile(client *mongo.Client, filename string) error {
 			}
 		}
 	}
-	//doc = append(doc, bson.E{Key: k, Value: fmt.Sprintf(":%T",v)})
 
 	jsonStr, _ := bson.MarshalExtJSONIndent(doc, true, true, "", "	")
 	// Output the BSON document to the console
@@ -79,17 +76,17 @@ func AddDataFromJSONFile(client *mongo.Client, filename string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println("Successfully added user to the database.")
+		fmt.Println("Successfully added data to the database.")
 	}
 	return nil
 }
 func InsertData(client *mongo.Client, data interface{}) error {
 	// Create the "test" database and "data" collection if they don't already exist
 	db := client.Database("test")
-	usersColl := db.Collection("data")
+	dataColl := db.Collection("data")
 
 	// Insert the data into the collection
-	_, err := usersColl.InsertOne(context.Background(), data)
+	_, err := dataColl.InsertOne(context.Background(), data)
 	if err != nil {
 		return err
 	}
